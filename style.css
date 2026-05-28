@@ -1,0 +1,139 @@
+/* --- Base Styles & Variables --- */
+:root {
+  /* Monochromatic Palette */
+  --purple-main: #7C19DD;
+  --purple-shade-1: #6714BA;
+  --purple-shade-2: #511091;
+  --purple-shade-3: #3A0C69;
+  --purple-shade-4: #230740;
+
+  /* UI Colors */
+  --bg-color: #fbf8ff; /* Extremely light purple tint for the background */
+  --card-bg: #ffffff;
+  --text-dark: var(--purple-shade-4);
+  --text-light: var(--purple-shade-2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+/* --- Navigation --- */
+.navbar {
+  background-color: var(--card-bg);
+  padding: 20px 50px;
+  /* Shadow tinted with your darkest purple instead of black */
+  box-shadow: 0 2px 10px rgba(35, 7, 64, 0.08); 
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  max-width: 250px;
+  height: auto;
+}
+
+/* --- Hero Section --- */
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  /* Using the darker shades for a striking hero background */
+  background: linear-gradient(135deg, var(--purple-shade-4) 0%, var(--purple-shade-3) 100%);
+  color: white;
+}
+
+.hero h1 {
+  color: #ffffff; 
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #e5d4f5; /* Light contrasting purple for readability */
+  max-width: 600px;
+  margin: 0 auto 30px auto;
+}
+
+.cta-button {
+  background-color: var(--purple-main);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 15px rgba(124, 25, 221, 0.4);
+}
+
+.cta-button:hover {
+  background-color: var(--purple-shade-1);
+  transform: translateY(-2px);
+}
+
+/* --- Features / Testing Cards --- */
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 60px 20px;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background-color: var(--card-bg);
+  padding: 40px 30px;
+  border-radius: 12px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(35, 7, 64, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-top: 5px solid var(--purple-main);
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 25px rgba(35, 7, 64, 0.15);
+  border-top-color: var(--purple-shade-1);
+}
+
+.feature-card h3 {
+  color: var(--purple-shade-1); 
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  color: var(--purple-shade-3); 
+}
+
+/* --- Animation Classes (Triggered by JS) --- */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.slide-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.delay-1 { transition-delay: 0.2s; }
+.delay-2 { transition-delay: 0.4s; }
+
+.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
