@@ -1,17 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   
-  // Scroll Animation Logic
-  const animatedElements = document.querySelectorAll('.fade-in, .slide-up');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target); 
-      }
-    });
-  }, { threshold: 0.1 });
-  animatedElements.forEach(el => observer.observe(el));
-
   // Element Selectors
   const generateBtn = document.getElementById('generateTokenBtn');
   const authenticateBtn = document.getElementById('authenticateBtn');
@@ -22,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 1. Browser-Side JWT Generation Function
   async function generateBrowserToken() {
-    // The private key generated
+    // The dummy private key provided in the testing guide
     const privateKeyPem = `-----BEGIN EC PRIVATE KEY-----\nMHcCAQEEIAcJY0LLsvZsDjdXYtj+k+ZDpGBETW5P3fdMTWuEFj7NoAoGCCqGSM49\nAwEHoUQDQgAE+OiOhhRBgwcc/nXDSaaYMbIOVnNnygXO4j5pk+PrUqrw5yYdbVBu\n0QeKFLzlDSDLcaQYWPRDo4Vd6xC8YeUPBQ==\n-----END EC PRIVATE KEY-----`;
 
     // Import the PEM key into a format the Web Crypto API can use
@@ -30,11 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Define claims based on the provided guide
     const claims = {
-      'name': 'Diego M.',
-      'given_name': 'Diego',
-      'family_name': 'Muriel',
-      'email': 'dmg@glia.com',
-      'sub': 'dmg.visitor',
+      'name': 'Gianluca, Visitor',
+      'given_name': 'Gianluca',
+      'family_name': 'Ciccarelli',
+      'email': 'gian+visitor@ciccarelli.dev',
+      'sub': 'gian.visitor',
     };
 
     // Sign the JWT using jose
