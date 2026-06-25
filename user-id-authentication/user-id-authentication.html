@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CE Auth Testing | Diego Muriel</title>
+  
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jose/4.14.4/index.umd.min.js"></script>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo-container">
+      <img src="images/Full LOGO_black.png" alt="CE Logo" class="logo" onerror="this.src='https://via.placeholder.com/150x50?text=CE+Logo'">
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-content fade-in">
+      <h1>User Authentication Testing</h1>
+      <p>Generate secure tokens locally and test authenticated engagements.</p>
+    </div>
+  </header>
+
+  <section class="features" style="flex-direction: column; align-items: center;">
+    
+    <div class="feature-card slide-up" style="width: 100%; max-width: 600px;">
+      <h3>1. Generate JWT</h3>
+      <p>Sign your payload with the dummy EC private key directly in the browser.</p>
+      
+      <div class="code-snippet-container" id="tokenDisplayBox">
+        <span id="tokenText">Generate your authorized token </span><span class="cursor" id="blinkingCursor">|</span>
+      </div>
+      
+      <button class="cta-button" id="generateTokenBtn" style="margin-top: 20px;">Generate Token</button>
+    </div>
+
+    <div class="feature-card slide-up delay-1" style="width: 100%; max-width: 600px;">
+      <h3>2. Authenticate User</h3>
+      <p>Append the generated token to the URL to simulate an authenticated state.</p>
+      
+      <button class="cta-button auth-btn" id="authenticateBtn" disabled title="Generate your auth token">Authenticate</button>
+    </div>
+
+    <div class="feature-card slide-up delay-2" style="width: 100%; max-width: 600px;">
+      <h3>Need more info?</h3>
+      <p>Review the official documentation on Secure Conversations.</p>
+      <a href="https://glia.atlassian.net/wiki/spaces/ENG/pages/2957574145/Testing+Secure+Conversations" target="_blank" rel="noopener noreferrer">
+        <button class="cta-button" style="margin-top: 15px; background-color: var(--purple-shade-3);">Go to the documentation</button>
+      </a>
+    </div>
+
+  </section>
+
+  <script src="auth-script.js"></script>
+</body>
+</html>
