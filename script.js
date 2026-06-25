@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2. Load Navbar Component Dynamically
   const navPlaceholder = document.getElementById('nav-placeholder');
   if (navPlaceholder) {
-    fetch('/components/navbar.html')
+    fetch('/clientengineering.dmg.github.io/components/navbar.html')
       .then(response => {
         if (!response.ok) throw new Error('Network response was not ok');
         return response.text();
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 3. Load Footer Component Dynamically
   const footerPlaceholder = document.getElementById('footer-placeholder');
   if (footerPlaceholder) {
-    fetch('/components/footer.html')
+    fetch('/clientengineering.dmg.github.io/components/footer.html')
       .then(response => {
         if (!response.ok) throw new Error('Network response was not ok');
         return response.text();

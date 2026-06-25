@@ -11,7 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // 1. Browser-Side JWT Generation Function
   async function generateBrowserToken() {
     // The dummy private key provided in the testing guide
-    const privateKeyPem = `-----BEGIN EC PRIVATE KEY-----\nMHcCAQEEIAcJY0LLsvZsDjdXYtj+k+ZDpGBETW5P3fdMTWuEFj7NoAoGCCqGSM49\nAwEHoUQDQgAE+OiOhhRBgwcc/nXDSaaYMbIOVnNnygXO4j5pk+PrUqrw5yYdbVBu\n0QeKFLzlDSDLcaQYWPRDo4Vd6xC8YeUPBQ==\n-----END EC PRIVATE KEY-----`;
+    const privateKeyPem = `-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgBwljQsuy9mwON1di
+2P6T5kOkYERNbk/d90xNa4QWPs2hRANCAAT46I6GFEGDBxz+dcNJppgxsg5Wc2fK
+Bc7iPmmT4+tSqvDnJh1tUG7RB4oUvOUNIMtxpBhY9EOjhV3rELxh5Q8F
+-----END PRIVATE KEY-----`;
 
     // Import the PEM key into a format the Web Crypto API can use
     const privateKey = await jose.importPKCS8(privateKeyPem, 'ES256');
