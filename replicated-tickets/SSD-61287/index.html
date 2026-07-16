@@ -3,176 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glia SPA Simulator & Dynamic Divs</title>
-    
-    <script async src="https://api.glia.com/salemove_integration.js"></script>
-
+    <title>Glia SPA Modal Bug Simulator</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f4f4f9;
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        nav { background-color: #333; padding: 15px; color: white; border-radius: 5px; }
+        nav button { background: transparent; color: white; border: 1px solid white; padding: 8px 15px; margin-right: 10px; cursor: pointer; border-radius: 4px; }
+        nav button:hover { background: white; color: #333; }
+        #main-content { padding: 20px; background: white; border-radius: 8px; margin-top: 20px; min-height: 200px; }
+        
+        /* The Fixed Bottom Modal */
+        .bottom-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            background-color: #ffeb3b;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
         }
 
-        /* ----------------------------------- */
-        /* SPA Navigation Styles               */
-        /* ----------------------------------- */
-        nav {
-            background-color: #333;
-            padding: 15px;
-            color: white;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-
-        nav button {
-            background-color: transparent;
-            color: white;
-            border: 1px solid white;
-            padding: 8px 15px;
-            margin-right: 10px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        nav button:hover {
-            background-color: white;
-            color: #333;
-        }
-
-        #main-content {
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        /* ----------------------------------- */
-        /* Dynamic Div Styles (Your Original)  */
-        /* ----------------------------------- */
-        #create-btn {
-            padding: 10px 15px;
-            font-size: 16px;
-            cursor: pointer;
+        /* Mock Glia Bubble */
+        #mock-glia-bubble {
+            position: fixed;
+            bottom: 20px; /* Default position */
+            right: 20px;
+            width: 60px;
+            height: 60px;
             background-color: #007bff;
+            border-radius: 50%;
             color: white;
-            border: none;
-            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: bottom 0.3s ease; /* Smooth animation */
+            z-index: 99;
         }
 
-        #create-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .dynamic-div {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-top: 15px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            max-width: 300px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .close-btn {
-            margin-top: 10px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-
-        .close-btn:hover {
-            background-color: #c82333;
+        /* The CSS class the Glia Web Rule applies */
+        .bubble-moved-up {
+            bottom: 320px !important; 
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <strong>Simulated Client Site:</strong>
+        <strong>SPA Router:</strong>
+        <button onclick="navigate('/')">Home</button>
         <button onclick="navigate('/subdomain1/auth')">Go to Auth</button>
         <button onclick="navigate('/subdomain1/info')">Go to Info</button>
-        <button onclick="navigate('/')">Home</button>
     </nav>
 
     <div id="main-content">
         <h2>Welcome</h2>
-        <p>Click the nav buttons above to simulate SPA routing. Watch how the Glia widget behaves.</p>
+        <p>Go to Auth to test the modal.</p>
     </div>
 
-    <hr style="border: 1px solid #ddd; margin-bottom: 20px;">
-
-    <h3>Dynamic Div Tool:</h3>
-    <button id="create-btn">Create Dummy Div</button>
-    <div id="container"></div>
+    <div id="mock-glia-bubble">Chat</div>
 
     <script>
-        // =========================================================
-        // 1. SPA ROUTING SIMULATION
-        // =========================================================
-        
+        const bubble = document.getElementById('mock-glia-bubble');
+
+        // SPA Router
         function navigate(path) {
-            // Changes the URL without a hard reload
             window.history.pushState({ path: path }, '', path);
             renderContent(path);
-            
-            // NOTE: If Glia has an API method to re-evaluate the page on route change, 
-            // you would call it right here to fix the client's issue.
-            // Example: if (window.sm) { window.sm.update() } 
         }
 
         function renderContent(path) {
             const mainContent = document.getElementById('main-content');
+            
             if (path.includes('/auth')) {
-                mainContent.innerHTML = `<h2>Authentication Page</h2><p>Imagine a login form here.</p>`;
+                mainContent.innerHTML = `
+                    <h2>Authentication Page</h2>
+                    <button id="auth-btn" style="padding: 10px; cursor: pointer;">Open Auth Modal</button>
+                `;
+                
+                // Attach event listener to the newly rendered button
+                document.getElementById('auth-btn').addEventListener('click', openModal);
             } else if (path.includes('/info')) {
-                mainContent.innerHTML = `<h2>User Info Page</h2><p>Imagine user account details here.</p>`;
+                mainContent.innerHTML = `<h2>User Info Page</h2><p>You navigated away without closing the modal.</p>`;
+                // THE BUG: The React router destroys the modal from the DOM here, 
+                // but no script tells the bubble to move back down.
+                removeModalIfItExists();
             } else {
                 mainContent.innerHTML = `<h2>Welcome</h2><p>Click the buttons above to navigate.</p>`;
+                removeModalIfItExists();
             }
         }
 
-        // Handles browser back/forward buttons
-        window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.path) {
-                renderContent(event.state.path);
-            } else {
-                renderContent(window.location.pathname);
-            }
-        });
+        function openModal() {
+            // 1. Create the fixed modal
+            const modal = document.createElement('div');
+            modal.id = 'auth-modal';
+            modal.classList.add('bottom-modal');
+            modal.innerHTML = `
+                <h3>Please Authenticate</h3>
+                <button id="close-modal-btn" style="padding: 10px; cursor: pointer;">Close Modal</button>
+            `;
+            document.body.appendChild(modal);
 
+            // 2. SIMULATE GLIA WEB RULE: Element Clicked -> Move Bubble Up
+            bubble.classList.add('bubble-moved-up');
 
-        // =========================================================
-        // 2. DYNAMIC DIV GENERATOR (From your uploaded file)
-        // =========================================================
-        
-        const createBtn = document.getElementById('create-btn');
-        const container = document.getElementById('container');
-
-        createBtn.addEventListener('click', () => {
-            const newDiv = document.createElement('div');
-            newDiv.classList.add('dynamic-div'); 
-
-            const textContent = document.createElement('p');
-            textContent.textContent = 'This is some dummy content generated by JavaScript.';
-            
-            const closeBtn = document.createElement('button');
-            closeBtn.textContent = 'Close';
-            closeBtn.classList.add('close-btn');
-
-            closeBtn.addEventListener('click', () => {
-                newDiv.remove(); 
+            // 3. Normal Flow: Close button clicked
+            document.getElementById('close-modal-btn').addEventListener('click', () => {
+                modal.remove();
+                // SIMULATE GLIA WEB RULE: Close Clicked -> Move Bubble Down
+                bubble.classList.remove('bubble-moved-up'); 
             });
+        }
 
-            newDiv.appendChild(textContent);
-            newDiv.appendChild(closeBtn);
-            container.appendChild(newDiv);
-        });
+        function removeModalIfItExists() {
+            const modal = document.getElementById('auth-modal');
+            if (modal) modal.remove(); // Removes it silently, bypassing the close button
+        }
     </script>
-
 </body>
 </html>
