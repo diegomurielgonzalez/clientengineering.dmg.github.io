@@ -1,120 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glia Web Rules SPA Simulator</title>
-    <script async src="https://api.glia.com/salemove_integration.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue Repro: SPA Bubble Position | CE Testing Site</title>
+  
+  <link rel="icon" type="image/x-icon" href="/clientengineering.dmg.github.io/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/clientengineering.dmg.github.io/style.css">
+  <script async src="https://api.glia.com/salemove_integration.js"></script>
 
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
-        nav { background-color: #333; padding: 15px; color: white; border-radius: 5px; margin-bottom: 20px; }
-        nav button { background: transparent; color: white; border: 1px solid white; padding: 8px 15px; margin-right: 10px; cursor: pointer; border-radius: 4px; }
-        nav button:hover { background: white; color: #333; }
-        #main-content { padding: 20px; background: white; border-radius: 8px; min-height: 200px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        
-        /* Modal Styles */
-        .bottom-modal {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 300px;
-            background-color: #ffeb3b; box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100;
-        }
+  <style>
+    /* Issue Header & Metadata */
+    .issue-header {
+      background-color: #f8f9fa;
+      padding: 40px 20px;
+      text-align: center;
+      border-bottom: 1px solid #eaeaea;
+    }
 
-        /* Mock Glia Bubble */
-        #mock-glia-bubble {
-            position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;
-            background-color: #007bff; border-radius: 50%; color: white;
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: bottom 0.3s ease; z-index: 99;
-        }
+    .issue-tags {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
 
-        /* The CSS class the Glia Web Rule will apply/remove */
-        .bubble-moved-up { bottom: 320px !important; }
-    </style>
+    .tag {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    /* SPA Simulator Layout */
+    .simulator-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .spa-nav {
+      background-color: #333;
+      padding: 15px;
+      color: white;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .spa-nav button {
+      background: transparent;
+      color: white;
+      border: 1px solid white;
+      padding: 8px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .spa-nav button:hover {
+      background: white;
+      color: #333;
+    }
+
+    #main-content {
+      padding: 30px;
+      background: white;
+      border-radius: 8px;
+      min-height: 250px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      border: 1px solid #eaeaea;
+    }
+    
+    /* Modal Styles */
+    .bottom-modal {
+      position: fixed; 
+      bottom: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 300px;
+      background-color: #ffeb3b; 
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center; 
+      z-index: 100;
+    }
+
+    /* Mock Glia Bubble */
+    #mock-glia-bubble {
+      position: fixed; 
+      bottom: 20px; 
+      right: 20px; 
+      width: 60px; 
+      height: 60px;
+      background-color: #007bff; 
+      border-radius: 50%; 
+      color: white;
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+      transition: bottom 0.3s ease; 
+      z-index: 99;
+    }
+
+    .bubble-moved-up { 
+      bottom: 320px !important; 
+    }
+  </style>
 </head>
 <body>
 
-    <nav>
-        <strong>SPA Router:</strong>
-        <button onclick="navigate('/')">Home</button>
-        <button onclick="navigate('/subdomain1/auth')">Go to Auth</button>
-        <button onclick="navigate('/subdomain1/info')">Go to Info</button>
+  <div id="nav-placeholder"></div>
+
+  <header class="issue-header">
+    <div class="fade-in">
+      <h1>SPA Routing: Bubble Position Bug</h1>
+      <p>Demonstrates the race condition where a React router destroys a modal before the "close" business rule can fire.</p>
+      
+      <div class="issue-tags">
+        <span class="tag" data-tag="spa">SPA</span>
+        <span class="tag" data-tag="business-rules">Business Rules</span>
+        <span class="tag" data-tag="ui-bug">UI Bug</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="simulator-container">
+    <nav class="spa-nav">
+      <strong>Simulated Client Site:</strong>
+      <button onclick="navigate('?path=home')">Home</button>
+      <button onclick="navigate('?path=subdomain1/auth')">Go to Auth</button>
+      <button onclick="navigate('?path=subdomain1/info')">Go to Info</button>
     </nav>
 
     <div id="main-content">
-        <h2>Welcome</h2>
-        <p>Go to Auth to test the rules.</p>
+      <h2>Welcome</h2>
+      <p>Click "Go to Auth" above to test the rules.</p>
     </div>
+  </main>
 
-    <div id="mock-glia-bubble">Chat</div>
+  <div id="mock-glia-bubble">Chat</div>
 
-    <script>
-        const bubble = document.getElementById('mock-glia-bubble');
+  <div id="footer-placeholder"></div>
 
-        // =========================================================
-        // SPA ROUTING
-        // =========================================================
-        function navigate(path) {
-            window.history.pushState({ path: path }, '', path);
-            renderContent(path);
+  <script src="/clientengineering.dmg.github.io/script.js"></script>
+
+  <script>
+    const bubble = document.getElementById('mock-glia-bubble');
+
+    // =========================================================
+    // SPA ROUTING
+    // =========================================================
+    function navigate(path) {
+      window.history.pushState({ path: path }, '', path);
+      renderContent(path);
+    }
+
+    function renderContent(path) {
+      const mainContent = document.getElementById('main-content');
+      
+      if (path.includes('auth')) {
+        mainContent.innerHTML = `
+          <h2>Authentication Page</h2>
+          <button id="auth-btn" style="padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px;">Open Auth Modal</button>
+        `;
+        
+        // SIMULATING GLIA RULE 1: Element Clicked (Auth Button)
+        document.getElementById('auth-btn').addEventListener('click', () => {
+          openModal();
+          console.log("🟢 GLIA RULE: Element Clicked (Auth Button) -> Move Bubble Up");
+          bubble.classList.add('bubble-moved-up');
+        });
+
+      } else {
+        if (path.includes('info')) {
+          mainContent.innerHTML = `<h2>User Info Page</h2><p>Navigated via SPA.</p>`;
+        } else {
+          mainContent.innerHTML = `<h2>Welcome</h2><p>Click the buttons above to navigate.</p>`;
+        }
+        
+        // SPA destroys the modal from the DOM silently
+        if (document.getElementById('auth-modal')) {
+          document.getElementById('auth-modal').remove(); 
         }
 
-        function renderContent(path) {
-            const mainContent = document.getElementById('main-content');
-            
-            if (path.includes('/auth')) {
-                mainContent.innerHTML = `
-                    <h2>Authentication Page</h2>
-                    <button id="auth-btn" style="padding: 10px; cursor: pointer;">Open Auth Modal</button>
-                `;
-                
-                // SIMULATING GLIA RULE 1: Element Clicked (Auth Button)
-                document.getElementById('auth-btn').addEventListener('click', () => {
-                    openModal();
-                    console.log("🟢 GLIA RULE: Element Clicked (Auth Button) -> Move Bubble Up");
-                    bubble.classList.add('bubble-moved-up');
-                });
+        // SIMULATING GLIA RULE 3: THE FAILSAFE (URL Changed)
+        console.log("🟠 GLIA RULE: URL Changed (No longer on Auth) -> Move Bubble Down");
+        bubble.classList.remove('bubble-moved-up');
+      }
+    }
 
-            } else {
-                if (path.includes('/info')) {
-                    mainContent.innerHTML = `<h2>User Info Page</h2><p>Navigated via SPA.</p>`;
-                } else {
-                    mainContent.innerHTML = `<h2>Welcome</h2><p>Click the buttons above to navigate.</p>`;
-                }
-                
-                // SPA destroys the modal from the DOM silently
-                if (document.getElementById('auth-modal')) {
-                    document.getElementById('auth-modal').remove(); 
-                }
+    // =========================================================
+    // MODAL LOGIC
+    // =========================================================
+    function openModal() {
+      const modal = document.createElement('div');
+      modal.id = 'auth-modal';
+      modal.classList.add('bottom-modal');
+      modal.innerHTML = `
+        <h3>Please Authenticate</h3>
+        <button id="close-modal-btn" style="padding: 10px 20px; cursor: pointer; background: #333; color: white; border: none; border-radius: 4px;">Close Modal</button>
+      `;
+      document.body.appendChild(modal);
 
-                // =========================================================
-                // SIMULATING GLIA RULE 3: THE FAILSAFE (URL Changed)
-                // =========================================================
-                console.log("🟠 GLIA RULE: URL Changed (No longer on Auth) -> Move Bubble Down");
-                bubble.classList.remove('bubble-moved-up');
-            }
+      // SIMULATING GLIA RULE 2: Element Clicked (Close Button)
+      document.getElementById('close-modal-btn').addEventListener('click', () => {
+        modal.remove();
+        console.log("🔴 GLIA RULE: Element Clicked (Close Button) -> Move Bubble Down");
+        bubble.classList.remove('bubble-moved-up');
+      });
+    }
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.path) {
+            renderContent(event.state.path);
+        } else {
+            renderContent(window.location.search || '?path=home');
         }
-
-        // =========================================================
-        // MODAL LOGIC
-        // =========================================================
-        function openModal() {
-            const modal = document.createElement('div');
-            modal.id = 'auth-modal';
-            modal.classList.add('bottom-modal');
-            modal.innerHTML = `
-                <h3>Please Authenticate</h3>
-                <button id="close-modal-btn" style="padding: 10px; cursor: pointer;">Close Modal</button>
-            `;
-            document.body.appendChild(modal);
-
-            // SIMULATING GLIA RULE 2: Element Clicked (Close Button)
-            document.getElementById('close-modal-btn').addEventListener('click', () => {
-                modal.remove();
-                console.log("🔴 GLIA RULE: Element Clicked (Close Button) -> Move Bubble Down");
-                bubble.classList.remove('bubble-moved-up');
-            });
-        }
-    </script>
+    });
+  </script>
 </body>
 </html>
