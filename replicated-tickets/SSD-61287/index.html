@@ -8,6 +8,7 @@
   <link rel="icon" type="image/x-icon" href="/clientengineering.dmg.github.io/images/favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/clientengineering.dmg.github.io/style.css">
+  
   <script async src="https://api.glia.com/salemove_integration.js"></script>
 
   <style>
@@ -94,27 +95,50 @@
       z-index: 100;
     }
 
-    /* Mock Glia Bubble */
-    #mock-glia-bubble {
-      position: fixed; 
-      bottom: 20px; 
-      right: 20px; 
-      width: 60px; 
-      height: 60px;
-      background-color: #007bff; 
-      border-radius: 50%; 
-      color: white;
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-weight: bold;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
-      transition: bottom 0.3s ease; 
-      z-index: 99;
+    /* Documentation Section Styles */
+    .issue-documentation {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      border: 1px solid #eaeaea;
+      line-height: 1.6;
     }
 
-    .bubble-moved-up { 
-      bottom: 320px !important; 
+    .issue-documentation h3 {
+      margin-top: 25px;
+      color: #333;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 5px;
+    }
+
+    .jira-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background-color: #e8f0fe;
+      color: #0056b3;
+      padding: 8px 15px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-bottom: 20px;
+      transition: background-color 0.2s;
+    }
+
+    .jira-link:hover {
+      background-color: #d0e1fd;
+    }
+
+    .step-list {
+      margin-left: 20px;
+      padding-left: 0;
+    }
+
+    .step-list li {
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -149,15 +173,51 @@
     </div>
   </main>
 
-  <div id="mock-glia-bubble">Chat</div>
+  <section class="issue-documentation">
+    <a href="https://glia.atlassian.net/browse/SSD-61287" class="jira-link" target="_blank">
+      🔗 Jira Ticket: SSD-61287
+    </a>
+    
+    <h2>Investigation & Replication Steps</h2>
+    <p>Below is the summary and solution provided to the client for setting up the necessary Business Rules to resolve this UI glitch.</p>
+
+    <h3>The Root Cause</h3>
+    <p>The client website functions as a Single Page Application (SPA). This means it dynamically updates content without ever doing a hard page reload. When visitors navigate away from the <code>/subdomain1/auth</code> page, the website instantly destroys the authentication window.</p>
+    <p>Because the window's "Close" button vanishes before anyone actually clicks it, the original rule designed to reset the bubble's position never fires. The bubble stays up simply because it never received the signal to come back down.</p>
+
+    <h3>The Solution</h3>
+    <p>To fix this, a failsafe Web Business Rule is required. Instead of relying on a button click, Glia is configured to automatically force the bubble back to its default position anytime the user leaves the authentication page.</p>
+
+    <h3>Step-by-Step Configuration</h3>
+    
+    <strong>Step 1: Set the Rule Triggers</strong>
+    <ul class="step-list">
+      <li>Go to <strong>Admin Console > Site Settings > Business Rules > Web</strong> and click Add new.</li>
+      <li>Enter a clear name for the rule (e.g., "Failsafe: Reset Bubble Position").</li>
+      <li>Under <strong>Pre-conditions</strong>, select <strong>Coming From</strong>.</li>
+      <li>Enter <code>(!*/subdomain1/auth*)*</code> in the input field. This specific formatting tells Glia to exclude the auth page and trigger the rule the moment the user leaves it.</li>
+    </ul>
+
+    <strong>Step 2: Catch the SPA Navigation</strong>
+    <ul class="step-list">
+      <li>Scroll down to <strong>Source</strong> and select <strong>Navigation</strong>.</li>
+      <li>Enter <code>*</code> in the input field. This acts as a wildcard, allowing Glia to detect whenever the SPA silently changes the URL to a new path.</li>
+    </ul>
+
+    <strong>Step 3: Force the Position Reset</strong>
+    <ul class="step-list">
+      <li>Under <strong>Actions</strong>, select <strong>Set reactive bubble position</strong>.</li>
+      <li>Explicitly define the default pixel values to override the elevated state. Enter <strong>15px</strong> for the vertical position and <strong>20px</strong> for the horizontal position.</li>
+      <li>Click Save.</li>
+    </ul>
+    <p>This failsafe makes the layout bulletproof. Regardless of how fast visitors navigate away from the authentication page, the bubble will instantly snap back to its proper place.</p>
+  </section>
 
   <div id="footer-placeholder"></div>
 
   <script src="/clientengineering.dmg.github.io/script.js"></script>
 
   <script>
-    const bubble = document.getElementById('mock-glia-bubble');
-
     // =========================================================
     // SPA ROUTING
     // =========================================================
@@ -175,12 +235,9 @@
           <button id="auth-btn" style="padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px;">Open Auth Modal</button>
         `;
         
-        // SIMULATING GLIA RULE 1: Element Clicked (Auth Button)
-        document.getElementById('auth-btn').addEventListener('click', () => {
-          openModal();
-          console.log("🟢 GLIA RULE: Element Clicked (Auth Button) -> Move Bubble Up");
-          bubble.classList.add('bubble-moved-up');
-        });
+        // Simulating the user opening the modal. 
+        // Real Glia Web Rule (Element Clicked) will trigger here.
+        document.getElementById('auth-btn').addEventListener('click', openModal);
 
       } else {
         if (path.includes('info')) {
@@ -189,14 +246,13 @@
           mainContent.innerHTML = `<h2>Welcome</h2><p>Click the buttons above to navigate.</p>`;
         }
         
-        // SPA destroys the modal from the DOM silently
+        // SPA destroys the modal from the DOM silently during navigation
         if (document.getElementById('auth-modal')) {
           document.getElementById('auth-modal').remove(); 
         }
-
-        // SIMULATING GLIA RULE 3: THE FAILSAFE (URL Changed)
-        console.log("🟠 GLIA RULE: URL Changed (No longer on Auth) -> Move Bubble Down");
-        bubble.classList.remove('bubble-moved-up');
+        
+        // At this exact moment, the REAL Glia Failsafe Web Rule will catch 
+        // the URL change and reset the bubble position.
       }
     }
 
@@ -213,15 +269,13 @@
       `;
       document.body.appendChild(modal);
 
-      // SIMULATING GLIA RULE 2: Element Clicked (Close Button)
+      // Real Glia Web Rule (Element Clicked -> Reset Position) will trigger here.
       document.getElementById('close-modal-btn').addEventListener('click', () => {
         modal.remove();
-        console.log("🔴 GLIA RULE: Element Clicked (Close Button) -> Move Bubble Down");
-        bubble.classList.remove('bubble-moved-up');
       });
     }
 
-    // Handle browser back/forward buttons
+    // Handle browser back/forward buttons seamlessly
     window.addEventListener('popstate', (event) => {
         if (event.state && event.state.path) {
             renderContent(event.state.path);
