@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glia SDK Custom Attributes Simulator</title>
+    <title>Glia Web Rules SPA Simulator</title>
     <script async src="https://api.glia.com/salemove_integration.js"></script>
 
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
-        nav { background-color: #333; padding: 15px; color: white; border-radius: 5px; }
+        nav { background-color: #333; padding: 15px; color: white; border-radius: 5px; margin-bottom: 20px; }
         nav button { background: transparent; color: white; border: 1px solid white; padding: 8px 15px; margin-right: 10px; cursor: pointer; border-radius: 4px; }
         nav button:hover { background: white; color: #333; }
-        #main-content { padding: 20px; background: white; border-radius: 8px; margin-top: 20px; min-height: 200px; }
+        #main-content { padding: 20px; background: white; border-radius: 8px; min-height: 200px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
+        /* Modal Styles */
         .bottom-modal {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 300px;
             background-color: #ffeb3b; box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
             display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100;
         }
 
+        /* Mock Glia Bubble */
         #mock-glia-bubble {
             position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;
             background-color: #007bff; border-radius: 50%; color: white;
@@ -26,6 +28,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: bottom 0.3s ease; z-index: 99;
         }
 
+        /* The CSS class the Glia Web Rule will apply/remove */
         .bubble-moved-up { bottom: 320px !important; }
     </style>
 </head>
@@ -40,7 +43,7 @@
 
     <div id="main-content">
         <h2>Welcome</h2>
-        <p>Go to Auth to test the modal and SDK events.</p>
+        <p>Go to Auth to test the rules.</p>
     </div>
 
     <div id="mock-glia-bubble">Chat</div>
@@ -48,38 +51,9 @@
     <script>
         const bubble = document.getElementById('mock-glia-bubble');
 
-        // ==========================================
-        // GLIA SDK HELPER FUNCTION
-        // ==========================================
-        function updateGliaAttribute(isOpen) {
-            console.log(`📡 Sending to Glia SDK: isBottomModalOpen = ${isOpen}`);
-            
-            // 1. The REAL Glia SDK call
-            if (window.sm && window.sm.getApi) {
-                try {
-                    window.sm.getApi({version: 'v1'}).updateInformation({
-                        customAttributes: { isBottomModalOpen: isOpen }
-                    }).then(() => {
-                        console.log("✅ Glia successfully updated custom attributes.");
-                    }).catch(err => console.error("❌ Glia SDK error:", err));
-                } catch (e) {
-                    console.warn("Glia API not fully loaded yet.");
-                }
-            } else {
-                console.warn("⚠️ window.sm not found. (Expected if not running on a whitelisted domain).");
-            }
-
-            // 2. SIMULATE the Glia Web Rule happening locally for your visual testing
-            if (isOpen) {
-                bubble.classList.add('bubble-moved-up');
-            } else {
-                bubble.classList.remove('bubble-moved-up');
-            }
-        }
-
-        // ==========================================
+        // =========================================================
         // SPA ROUTING
-        // ==========================================
+        // =========================================================
         function navigate(path) {
             window.history.pushState({ path: path }, '', path);
             renderContent(path);
@@ -93,23 +67,37 @@
                     <h2>Authentication Page</h2>
                     <button id="auth-btn" style="padding: 10px; cursor: pointer;">Open Auth Modal</button>
                 `;
-                document.getElementById('auth-btn').addEventListener('click', openModal);
+                
+                // SIMULATING GLIA RULE 1: Element Clicked (Auth Button)
+                document.getElementById('auth-btn').addEventListener('click', () => {
+                    openModal();
+                    console.log("🟢 GLIA RULE: Element Clicked (Auth Button) -> Move Bubble Up");
+                    bubble.classList.add('bubble-moved-up');
+                });
+
             } else {
                 if (path.includes('/info')) {
-                    mainContent.innerHTML = `<h2>User Info Page</h2><p>SPA routed safely. SDK fired.</p>`;
+                    mainContent.innerHTML = `<h2>User Info Page</h2><p>Navigated via SPA.</p>`;
                 } else {
                     mainContent.innerHTML = `<h2>Welcome</h2><p>Click the buttons above to navigate.</p>`;
                 }
                 
-                // CRITICAL FIX: Whenever the route changes away from Auth, 
-                // remove the modal AND tell Glia it is closed.
+                // SPA destroys the modal from the DOM silently
                 if (document.getElementById('auth-modal')) {
-                    removeModalIfItExists();
-                    updateGliaAttribute(false); 
+                    document.getElementById('auth-modal').remove(); 
                 }
+
+                // =========================================================
+                // SIMULATING GLIA RULE 3: THE FAILSAFE (URL Changed)
+                // =========================================================
+                console.log("🟠 GLIA RULE: URL Changed (No longer on Auth) -> Move Bubble Down");
+                bubble.classList.remove('bubble-moved-up');
             }
         }
 
+        // =========================================================
+        // MODAL LOGIC
+        // =========================================================
         function openModal() {
             const modal = document.createElement('div');
             modal.id = 'auth-modal';
@@ -120,19 +108,12 @@
             `;
             document.body.appendChild(modal);
 
-            // Tell Glia the modal opened
-            updateGliaAttribute(true);
-
+            // SIMULATING GLIA RULE 2: Element Clicked (Close Button)
             document.getElementById('close-modal-btn').addEventListener('click', () => {
                 modal.remove();
-                // Tell Glia the modal closed natively
-                updateGliaAttribute(false);
+                console.log("🔴 GLIA RULE: Element Clicked (Close Button) -> Move Bubble Down");
+                bubble.classList.remove('bubble-moved-up');
             });
-        }
-
-        function removeModalIfItExists() {
-            const modal = document.getElementById('auth-modal');
-            if (modal) modal.remove(); 
         }
     </script>
 </body>
