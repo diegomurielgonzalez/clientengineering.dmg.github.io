@@ -107,6 +107,10 @@
       line-height: 1.6;
     }
 
+    .issue-documentation h2 {
+      margin-top: 0;
+    }
+
     .issue-documentation h3 {
       margin-top: 25px;
       color: #333;
@@ -178,38 +182,34 @@
       🔗 Jira Ticket: SSD-61287
     </a>
     
-    <h2>Investigation & Replication Steps</h2>
-    <p>Below is the summary and solution provided to the client for setting up the necessary Business Rules to resolve this UI glitch.</p>
-
-    <h3>The Root Cause</h3>
+    <h2>Investigation Summary</h2>
     <p>The client website functions as a Single Page Application (SPA). This means it dynamically updates content without ever doing a hard page reload. When visitors navigate away from the <code>/subdomain1/auth</code> page, the website instantly destroys the authentication window.</p>
     <p>Because the window's "Close" button vanishes before anyone actually clicks it, the original rule designed to reset the bubble's position never fires. The bubble stays up simply because it never received the signal to come back down.</p>
 
-    <h3>The Solution</h3>
-    <p>To fix this, a failsafe Web Business Rule is required. Instead of relying on a button click, Glia is configured to automatically force the bubble back to its default position anytime the user leaves the authentication page.</p>
+    <h2>Solution & Web Business Rules Setup</h2>
+    <p>To fix this, three interconnected Web Business Rules are required. Rules 1 and 2 handle the standard behavior (opening and closing the modal), while Rule 3 acts as the failsafe to automatically force the bubble back to its default position anytime the user leaves the authentication page.</p>
 
-    <h3>Step-by-Step Configuration</h3>
+    <h3>Rule 1: Move bubble up when div appears</h3>
+    <ul class="step-list">
+      <li><strong>Conditions &gt; Coming From:</strong> <code>*</code></li>
+      <li><strong>Source:</strong> Clicking as <strong>id</strong> <code>auth-btn</code></li>
+      <li><strong>Actions &gt; Set reactive bubble position:</strong> 320px vertically, 20px horizontally</li>
+    </ul>
+
+    <h3>Rule 2: Move bubble down when div disappears</h3>
+    <ul class="step-list">
+      <li><strong>Conditions &gt; Coming From:</strong> <code>*</code></li>
+      <li><strong>Source:</strong> Clicking as <strong>id</strong> <code>close-modal-btn</code></li>
+      <li><strong>Actions &gt; Set reactive bubble position:</strong> 15px vertically, 20px horizontally</li>
+    </ul>
+
+    <h3>Rule 3: Return bubble to original position</h3>
+    <ul class="step-list">
+      <li><strong>Conditions &gt; Coming From:</strong> <code>(!*/subdomain1/auth*)*</code> <em>(This formatting tells Glia to exclude the auth page and trigger the rule the moment the user navigates away from it)</em></li>
+      <li><strong>Source:</strong> Navigation <code>*</code> <em>(This acts as a wildcard, allowing Glia to detect whenever the SPA silently changes the URL)</em></li>
+      <li><strong>Actions &gt; Set reactive bubble position:</strong> 15px vertically, 20px horizontally</li>
+    </ul>
     
-    <strong>Step 1: Set the Rule Triggers</strong>
-    <ul class="step-list">
-      <li>Go to <strong>Admin Console > Site Settings > Business Rules > Web</strong> and click Add new.</li>
-      <li>Enter a clear name for the rule (e.g., "Failsafe: Reset Bubble Position").</li>
-      <li>Under <strong>Pre-conditions</strong>, select <strong>Coming From</strong>.</li>
-      <li>Enter <code>(!*/subdomain1/auth*)*</code> in the input field. This specific formatting tells Glia to exclude the auth page and trigger the rule the moment the user leaves it.</li>
-    </ul>
-
-    <strong>Step 2: Catch the SPA Navigation</strong>
-    <ul class="step-list">
-      <li>Scroll down to <strong>Source</strong> and select <strong>Navigation</strong>.</li>
-      <li>Enter <code>*</code> in the input field. This acts as a wildcard, allowing Glia to detect whenever the SPA silently changes the URL to a new path.</li>
-    </ul>
-
-    <strong>Step 3: Force the Position Reset</strong>
-    <ul class="step-list">
-      <li>Under <strong>Actions</strong>, select <strong>Set reactive bubble position</strong>.</li>
-      <li>Explicitly define the default pixel values to override the elevated state. Enter <strong>15px</strong> for the vertical position and <strong>20px</strong> for the horizontal position.</li>
-      <li>Click Save.</li>
-    </ul>
     <p>This failsafe makes the layout bulletproof. Regardless of how fast visitors navigate away from the authentication page, the bubble will instantly snap back to its proper place.</p>
   </section>
 
