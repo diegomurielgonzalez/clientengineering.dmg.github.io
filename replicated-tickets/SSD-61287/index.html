@@ -12,6 +12,10 @@
   <script async src="https://api.glia.com/salemove_integration.js"></script>
 
   <style>
+    /* =========================================================
+       LIGHT MODE (DEFAULT) STYLES
+       ========================================================= */
+       
     /* Issue Header & Metadata */
     .issue-header {
       background-color: #f8f9fa;
@@ -25,6 +29,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
+      flex-wrap: wrap; /* Added for responsiveness on small screens */
     }
 
     .tag {
@@ -51,6 +56,7 @@
       margin-bottom: 20px;
       display: flex;
       align-items: center;
+      flex-wrap: wrap; /* <--- THE FIX: Allows buttons to wrap to the next line on mobile */
       gap: 15px;
     }
 
@@ -77,6 +83,7 @@
       min-height: 250px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.05);
       border: 1px solid #eaeaea;
+      word-break: break-word; /* Prevents long text from breaking the container */
     }
     
     /* Modal Styles */
@@ -93,6 +100,10 @@
       justify-content: center; 
       align-items: center; 
       z-index: 100;
+    }
+
+    .bottom-modal h3 {
+        color: #333;
     }
 
     /* Documentation Section Styles */
@@ -143,6 +154,62 @@
 
     .step-list li {
       margin-bottom: 10px;
+    }
+
+    /* =========================================================
+       DARK MODE OVERRIDES
+       ========================================================= */
+    @media (prefers-color-scheme: dark) {
+      .issue-header {
+        background-color: #1e1e24; 
+        border-bottom: 1px solid #333;
+        color: #e0e0e0;
+      }
+
+      #main-content,
+      .issue-documentation {
+        background-color: #1e1e24; 
+        border: 1px solid #333;
+        color: #e0e0e0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      }
+
+      .issue-documentation h2,
+      .issue-documentation h3 {
+        color: #ffffff; 
+        border-bottom: 1px solid #444;
+      }
+
+      .jira-link {
+        background-color: #1a365d; 
+        color: #8bb4f7; 
+      }
+
+      .jira-link:hover {
+        background-color: #224a80; 
+      }
+
+      .bottom-modal {
+        background-color: #2d2d2d; 
+        border-top: 1px solid #444;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+      }
+
+      .bottom-modal h3 {
+        color: #ffffff;
+      }
+    }
+    
+    /* Extra Small Screen Adjustments */
+    @media (max-width: 480px) {
+      .spa-nav {
+        justify-content: center;
+        text-align: center;
+      }
+      
+      .simulator-container, .issue-documentation {
+        padding: 20px;
+      }
     }
   </style>
 </head>
