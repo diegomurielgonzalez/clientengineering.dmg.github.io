@@ -4,130 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glia Left-Aligned Native Bubble Mockup</title>
-
+    <script>
+        window.sm = window.sm || {};
+        window.sm.config = window.sm.config || {};
+        window.sm.config.bubblePosition = 'bottom-left';
+    </script>
     <script async src="https://api.glia.com/salemove_integration.js"></script>
-    <style>
-        /* ==========================================================================
-        GLIA WIDGET - UNIVERSAL LEFT ALIGNMENT OVERRIDE ARCHITECTURE
-        ========================================================================== */
-
-        /* 
-        * TIER 1: GLOBAL VARIABLE NEUTRALIZATION
-        * Target the highest possible root node (#salemove) and intercept any CSS 
-        * custom properties utilized by the JavaScript engine for calculating 
-        * horizontal offsets. By forcing these variables to zero or left-oriented 
-        * values, the mathematical foundation of the script is corrupted prior to render.
-        */
-        #salemove, 
-        #salemove * {
-            --horizontal-offset: 0px!important;
-            --sm-offset-right: auto!important;
-            --sm-offset-left: 30px!important;
-            --engagement-right-offset: auto!important;
-        }
-
-        /* 
-        * TIER 2: OUTER WRAPPER BOUNDARY CONSTRAINTS
-        * Enforce fixed positioning on the outermost containers. The critical addition 
-        * is defining a maximum width to prevent the inner absolute elements from 
-        * stretching the wrapper across the entire viewport. If the wrapper spans 
-        * 100vw, internal flexbox algorithms can easily push content to the right.
-        */
-        #salemove.sm-visitor-app-container,
-        #salemove.sm-touch-draggable-lower-right,
-        #salemove.sm-touch-draggable-placeholder {
-            position: fixed!important;
-            left: 30px!important;
-            right: auto!important;
-            bottom: 30px!important;
-            transform: none!important; /* Neutralize matrix translations */
-            width: max-content!important; /* Constrain the wrapper boundary tightly */
-            max-width: calc(100vw - 60px)!important;
-            z-index: 2147483647!important; /* Assure maximum top-level stacking context */
-        }
-
-        /* 
-        * TIER 3: INNER APPLICATION ENFORCEMENT
-        * The internal script frequently applies absolute positioning to the 
-        *.sm-visitor-app class upon mutation to the open state. This strips 
-        * absolute positioning, forcing the node back into standard document flow, 
-        * and explicitly declares left alignment while neutralizing auto-margins.
-        */
-        #salemove.sm-visitor-app {
-            position: relative!important;
-            left: 0!important;
-            right: auto!important;
-            margin-left: 0!important;
-            margin-right: auto!important;
-            transform: none!important;
-            /* Neutralize flexbox alignment vectors at the application root */
-            align-self: flex-start!important;
-            justify-self: flex-start!important;
-        }
-
-        /* 
-        * TIER 4: DIALOG MODAL GEOMETRY NEUTRALIZATION
-        * This tier directly targets the node injected during the open state: 
-        * (<div role="alertdialog" class="sm-inner sm-media-selection">). 
-        * As the primary target for dynamic inline styling, we must assert total 
-        * dominance over its physical box model properties.
-        */
-        #salemove.sm-inner.sm-media-selection,
-        #salemove.sm-inner {
-            position: relative!important;
-            left: 0!important;
-            right: auto!important;
-            float: left!important; 
-            margin: 0!important;
-            transform: none!important;
-            transform-origin: bottom left!important; /* Restructure animation origin */
-        }
-
-        /* 
-        * TIER 5: FLEXBOX AND GRID CONTAINER RESET
-        * Deeply nested layout engines frequently utilize justify-content to dictate 
-        * spatial distribution. This tier iterates through the container hierarchy 
-        * and forces flex-start, preventing elements from distributing to the right.
-        */
-        #salemove.sm-visitor-app-container div {
-            justify-content: flex-start!important;
-            align-items: flex-start!important;
-            text-align: left!important;
-        }
-
-        /* 
-        * TIER 6: ANIMATION DECOUPLING
-        * The visual "snap" occurs because CSS animation keyframes are hardcoded 
-        * to translate across the X-axis. By excluding horizontal properties from 
-        * the transition array, the widget appears seamlessly on the left.
-        */
-        #salemove.sm-visitor-app,
-        #salemove.sm-inner {
-            transition-property: height, opacity, transform!important;
-            transition-duration: 0.3s!important;
-            /* Explicitly exclude 'left', 'right', and 'width' from transitioning */
-        }
-
-        /* 
-        * TIER 7: MOBILE RESPONSIVENESS OVERRIDE
-        * Maintain the original mobile logic, ensuring tighter 20px margins 
-        * are universally respected on viewports narrower than 768px.
-        */
-        @media (max-width: 768px) {
-            #salemove.sm-touch-draggable-lower-right,
-            #salemove.sm-touch-draggable-placeholder {
-                left: 20px!important;
-                bottom: 20px!important;
-            }
-            
-            #salemove.sm-touch-draggable-placeholder,
-            #salemove.sm-visitor-app,
-            #salemove.sm-inner {
-                max-width: calc(100vw - 40px)!important;
-                width: 100%!important;
-            }
-        }
-    </style>
+    
 </head>
 <body>
 
