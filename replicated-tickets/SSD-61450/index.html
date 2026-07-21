@@ -16,29 +16,25 @@
             color: #333;
         }
 
-        /* * 1. UNIVERSAL LEFT ALIGNMENT 
-        * Target ONLY the outermost draggable wrappers to move the unit.
-        * We specifically removed .sm-visitor-app from this rule so it 
-        * retains Glia's native internal padding and drop shadows.
+        /* * 1. UNIVERSAL LEFT ALIGNMENT FOR ALL SCREEN SIZES
+        * Target ONLY the outermost positioning wrappers.
+        * .sm-touch-draggable-lower-right = The closed bubble
+        * .sm-touch-draggable-placeholder = The open engagement layout
         */
         .salemove .sm-touch-draggable-lower-right,
         .salemove .sm-touch-draggable-placeholder {
-            position: fixed !important;
             left: 20px !important;
             right: auto !important;
-            bottom: 20px !important;
-            transform: none !important; /* Neutralizes Glia's dynamic JS positioning */
+            transform: none !important; /* Neutralizes Glia's dynamic JS sliding animations */
         }
 
-        /* * 2. MOBILE OVERFLOW PREVENTION
-        * On mobile, Glia's panel natively tries to stretch to the full screen width.
-        * Because we anchored it 20px from the left, we just cap the max-width 
-        * so it doesn't bleed off the right side of the phone screen.
+        /* * 2. MOBILE OVERFLOW PREVENTION (OPEN LAYOUT ONLY)
+        * Because we shifted the entire layout 20px from the left, we must cap its 
+        * maximum width on mobile screens so it does not bleed off the right edge.
+        * We apply this ONLY to the open layout wrapper, leaving the bubble itself alone.
         */
-        @media (max-width: 768px) {
-            .salemove .sm-visitor-app {
-                max-width: calc(100vw - 40px) !important;
-            }
+        .sm-mobile .salemove .sm-touch-draggable-placeholder {
+            max-width: calc(100vw - 40px) !important;
         }
     </style>
 </head>
