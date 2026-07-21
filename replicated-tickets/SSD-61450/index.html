@@ -50,6 +50,22 @@
                 height: 48px;
             }
         }
+
+        /* Move the media selection panel (alertdialog) to the left */
+        #salemove .sm-touch-draggable-placeholder {
+            position: fixed !important;
+            left: 30px !important;
+            right: auto !important;
+            bottom: 30px !important;
+            transform: none !important;
+        }
+        @media (max-width: 768px) {
+            #salemove .sm-touch-draggable-placeholder {
+                left: 20px !important;
+                bottom: 20px !important;
+                max-width: calc(100vw - 40px) !important;
+            }
+        }
     </style>
 </head>
 <body>
