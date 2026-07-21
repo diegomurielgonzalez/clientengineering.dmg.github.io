@@ -45,9 +45,9 @@
             background-color: #1e3bb3; 
         }
 
-        /* * OVERRIDE GLIA'S DEFAULT POSITIONING 
-        * Target the actual floating application containers, breaking them 
-        * out of their default flex/grid layout and pinning them to the left.
+        /* * 1. OVERRIDE GLIA'S DEFAULT DESKTOP POSITIONING 
+        * Target the floating application containers, breaking them 
+        * out of their default layout and pinning them to the left.
         */
         .salemove .sm-touch-draggable-placeholder,
         .salemove .sm-visitor-app {
@@ -55,6 +55,21 @@
             left: 30px !important;
             right: auto !important;
             bottom: 30px !important;
+        }
+
+        /* * 2. RESPONSIVE MOBILE FIX
+        * Neutralize the .sm-mobile class overrides. 
+        * This kills the rogue JS positioning, keeps it pinned left, 
+        * and recalculates the width so it fits perfectly on small screens.
+        */
+        .sm-mobile .salemove .sm-touch-draggable-placeholder,
+        .sm-mobile .salemove .sm-visitor-app {
+            left: 20px !important; /* Slightly tighter margin for mobile screens */
+            right: auto !important;
+            bottom: 20px !important;
+            width: calc(100vw - 40px) !important; /* Prevents the panel from overflowing the screen */
+            max-width: 380px !important; /* Caps the size so it maintains a clean chat window shape */
+            transform: none !important; /* Stops Glia's JS from sliding it back to the right */
         }
     </style>
 </head>
