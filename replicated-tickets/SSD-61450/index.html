@@ -46,11 +46,15 @@
         }
 
         /* * OVERRIDE GLIA'S DEFAULT POSITIONING 
-        * This forces the Glia Engagement Panel to the left for this site only.
+        * Target the actual floating application containers, breaking them 
+        * out of their default flex/grid layout and pinning them to the left.
         */
-        .salemove #sm-visitor-app-container {
+        .salemove .sm-touch-draggable-placeholder,
+        .salemove .sm-visitor-app {
+            position: fixed !important;
             left: 30px !important;
             right: auto !important;
+            bottom: 30px !important;
         }
     </style>
 </head>
