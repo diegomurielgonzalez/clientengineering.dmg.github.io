@@ -1,0 +1,27 @@
+[
+  {
+    "id": "SSD-61287",
+    "title": "SPA Routing: Bubble Position Bug",
+    "date": "2026-07-16",
+    "tags": [
+      "SPA",
+      "Business Rules",
+      "UI Bug"
+    ],
+    "description": "Demonstrates the race condition where a React router destroys a modal before the 'close' business rule can fire.",
+    "link": "./SSD-61287/index.html"
+  },
+  {
+    "id": "Auth-Tool",
+    "title": "User Authentication Simulator",
+    "date": "2026-06-25",
+    "tags": [
+      "Auth",
+      "Tokens",
+      "API",
+      "Tool"
+    ],
+    "description": "Generate secure tokens locally using a dummy EC private key and test authenticated engagements directly in the browser.",
+    "link": "./user-id-authentication/index.html"
+  }
+]

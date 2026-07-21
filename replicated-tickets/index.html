@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Replicated Tickets | CE Testing Site</title>
+  
+  <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+
+  <style>
+    /* Add this specific style block to your existing styles */
+    .tickets-header { text-align: center; padding: 40px 20px 20px; background-color: var(--card-bg); border-bottom: 1px solid var(--purple-shade-3); }
+    .search-container { max-width: 600px; margin: 20px auto 0; }
+    
+    #ticket-search {
+      width: 100%; padding: 15px 20px; font-size: 16px; border: 2px solid #ccc;
+      border-radius: 8px; outline: none; margin-bottom: 15px;
+      background-color: var(--bg-color); color: var(--text-dark);
+    }
+    
+    .filter-options {
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      gap: 15px; 
+      flex-wrap: wrap; 
+      font-size: 0.9rem;
+      margin-top: 15px;
+    }
+
+    .filter-label {
+      font-weight: bold;
+      color: var(--text-dark);
+      margin-right: 5px;
+    }
+    
+    .filter-options label { cursor: pointer; color: var(--text-light); font-weight: bold; }
+    
+    .tickets-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .ticket-card { background: var(--card-bg); border: 1px solid var(--purple-shade-3); border-radius: 8px; padding: 20px; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: transform 0.2s ease;}
+    .ticket-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(124, 25, 221, 0.2); border-color: var(--purple-main); }
+    .ticket-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-light); margin-bottom: 10px; border-bottom: 1px solid var(--purple-shade-3); padding-bottom: 10px; }
+    .ticket-id { font-weight: bold; color: var(--purple-shade-1); }
+    .ticket-title { font-size: 1.2rem; margin: 0 0 10px 0; color: var(--text-dark); }
+    .ticket-desc { font-size: 0.95rem; color: var(--text-light); flex-grow: 1; margin-bottom: 15px; }
+    .ticket-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { background-color: var(--purple-shade-3); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+    .no-results { text-align: center; grid-column: 1 / -1; padding: 40px; color: var(--text-light); }
+  </style>
+</head>
+<body>
+
+  <div id="nav-placeholder"></div>
+
+  <header class="tickets-header">
+    <h1>Replicated Issues Hub</h1>
+    <div class="search-container">
+      <input type="text" id="ticket-search" placeholder="Search issues...">
+      
+      <div class="filter-options">
+        <span class="filter-label">Filter by:</span> <label><input type="radio" name="filter" value="all" checked> All</label>
+        <label><input type="radio" name="filter" value="id"> Jira ID</label>
+        <label><input type="radio" name="filter" value="title"> Title</label>
+        <label><input type="radio" name="filter" value="tag"> Tags</label>
+      </div>
+    </div>
+  </header>
+
+  <main class="tickets-container" id="tickets-container">
+    <div class="no-results">Loading tickets...</div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="../js/script.js"></script>
+
+  <script>
+    let ticketsData = []; // Will hold our fetched automated database
+
+    const container = document.getElementById('tickets-container');
+    const searchInput = document.getElementById('ticket-search');
+    const filterRadios = document.querySelectorAll('input[name="filter"]');
+
+    // 1. Fetch the automated JSON database
+    fetch('./tickets.json')
+      .then(res => res.json())
+      .then(data => {
+        ticketsData = data;
+        renderCards(ticketsData);
+      })
+      .catch(err => {
+        container.innerHTML = `<div class="no-results">Failed to load database. Did you run generate-db.js?</div>`;
+        console.error(err);
+      });
+
+    // 2. Render Function
+    function renderCards(tickets) {
+      container.innerHTML = '';
+      if (tickets.length === 0) {
+        container.innerHTML = `<div class="no-results">No issues found matching your search.</div>`;
+        return;
+      }
+
+      tickets.forEach(ticket => {
+        const tagsHtml = (ticket.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('');
+        const card = document.createElement('a');
+        card.href = ticket.link;
+        card.className = 'ticket-card'; 
+        
+        card.innerHTML = `
+          <div class="ticket-meta">
+            <span class="ticket-id">${ticket.id || 'N/A'}</span>
+            <span class="ticket-date">${ticket.date || ''}</span>
+          </div>
+          <h2 class="ticket-title">${ticket.title || 'Untitled'}</h2>
+          <p class="ticket-desc">${ticket.description || ''}</p>
+          <div class="ticket-tags">${tagsHtml}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 3. Search Logic with Filters
+    function handleSearch() {
+      const query = searchInput.value.toLowerCase().trim();
+      const activeFilter = document.querySelector('input[name="filter"]:checked').value;
+
+      if (!query) {
+        renderCards(ticketsData);
+        return;
+      }
+
+      const filteredTickets = ticketsData.filter(ticket => {
+        const idMatch = (ticket.id || '').toLowerCase().includes(query);
+        const titleMatch = (ticket.title || '').toLowerCase().includes(query);
+        const tagMatch = (ticket.tags || []).some(tag => tag.toLowerCase().includes(query));
+
+        if (activeFilter === 'id') return idMatch;
+        if (activeFilter === 'title') return titleMatch;
+        if (activeFilter === 'tag') return tagMatch;
+        
+        // Default "All"
+        return idMatch || titleMatch || tagMatch;
+      });
+
+      renderCards(filteredTickets);
+    }
+
+    searchInput.addEventListener('input', handleSearch);
+    filterRadios.forEach(radio => radio.addEventListener('change', handleSearch));
+  </script>
+</body>
+</html>

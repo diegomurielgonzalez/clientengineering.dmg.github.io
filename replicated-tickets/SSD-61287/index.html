@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Issue Repro: SPA Bubble Position | CE Testing Site</title>
   
-  <link rel="icon" type="image/x-icon" href="/clientengineering.dmg.github.io/images/favicon.ico">
+  <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/clientengineering.dmg.github.io/style.css">
+  <link rel="stylesheet" href="../../css/style.css">
   
   <script async src="https://api.glia.com/salemove_integration.js"></script>
 
@@ -156,10 +156,46 @@
       margin-bottom: 10px;
     }
 
+    /* Figure and Image Styles */
+    .rule-figure {
+      margin: 30px auto;
+      max-width: 600px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .rule-figure img {
+      width: 100%;
+      height: auto; /* Maintains aspect ratio for responsiveness */
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border: 1px solid #eaeaea;
+    }
+
+    .rule-figure figcaption {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: #666;
+      font-style: italic;
+      text-align: center;
+      line-height: 1.4;
+    }
+
     /* =========================================================
        DARK MODE OVERRIDES
        ========================================================= */
     @media (prefers-color-scheme: dark) {
+      .rule-figure img {
+        border-color: #333;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      }
+
+      .rule-figure figcaption {
+        color: #aaa;
+      }
+
       .issue-header {
         background-color: #1e1e24; 
         border-bottom: 1px solid #333;
@@ -249,12 +285,13 @@
       🔗 Jira Ticket: SSD-61287
     </a>
     
-    <h2>Investigation Summary</h2>
-    <p>The client website functions as a Single Page Application (SPA). This means it dynamically updates content without ever doing a hard page reload. When visitors navigate away from the <code>/subdomain1/auth</code> page, the website instantly destroys the authentication window.</p>
-    <p>Because the window's "Close" button vanishes before anyone actually clicks it, the original rule designed to reset the bubble's position never fires. The bubble stays up simply because it never received the signal to come back down.</p>
-
     <h2>Solution & Web Business Rules Setup</h2>
     <p>To fix this, three interconnected Web Business Rules are required. Rules 1 and 2 handle the standard behavior (opening and closing the modal), while Rule 3 acts as the failsafe to automatically force the bubble back to its default position anytime the user leaves the authentication page.</p>
+
+    <figure class="rule-figure">
+      <img src="./images/business-rules.png" alt="Overview of the three Web Business Rules listed in the Glia Admin Console">
+      <figcaption>Fig 1: The three interconnected Web Business Rules required to fix the SPA routing issue.</figcaption>
+    </figure>
 
     <h3>Rule 1: Move bubble up when div appears</h3>
     <ul class="step-list">
@@ -262,14 +299,24 @@
       <li><strong>Source:</strong> Clicking as <strong>id</strong> <code>auth-btn</code></li>
       <li><strong>Actions &gt; Set reactive bubble position:</strong> 320px vertically, 20px horizontally</li>
     </ul>
-
+    
+    <figure class="rule-figure">
+      <img src="./images/move-up.png" alt="Configuration settings showing the trigger on the auth-btn ID and the action to set vertical position to 320px">
+      <figcaption>Fig 2: Configuration to elevate the bubble when the user clicks the button to open the authentication modal.</figcaption>
+    </figure>
+    
     <h3>Rule 2: Move bubble down when div disappears</h3>
     <ul class="step-list">
       <li><strong>Conditions &gt; Coming From:</strong> <code>*</code></li>
       <li><strong>Source:</strong> Clicking as <strong>id</strong> <code>close-modal-btn</code></li>
       <li><strong>Actions &gt; Set reactive bubble position:</strong> 15px vertically, 20px horizontally</li>
     </ul>
-
+    
+    <figure class="rule-figure">
+      <img src="./images/move-down.png" alt="Configuration settings showing the trigger on the close-modal-btn ID and the action to revert the position to 15px vertically">
+      <figcaption>Fig 3: Configuration to revert the bubble position when the close button is explicitly clicked.</figcaption>
+    </figure>
+    
     <h3>Rule 3: Return bubble to original position</h3>
     <ul class="step-list">
       <li><strong>Conditions &gt; Coming From:</strong> <code>(!*/subdomain1/auth*)*</code> <em>(This formatting tells Glia to exclude the auth page and trigger the rule the moment the user navigates away from it)</em></li>
@@ -277,12 +324,17 @@
       <li><strong>Actions &gt; Set reactive bubble position:</strong> 15px vertically, 20px horizontally</li>
     </ul>
     
+    <figure class="rule-figure">
+      <img src="./images/return.png" alt="Configuration settings showing the exclusion regex condition and the navigation source trigger to reset the bubble">
+      <figcaption>Fig 4: The SPA failsafe configuration. This forces the bubble back to its default position when the router dynamically changes the URL away from the auth page.</figcaption>
+    </figure>
+    
     <p>This failsafe makes the layout bulletproof. Regardless of how fast visitors navigate away from the authentication page, the bubble will instantly snap back to its proper place.</p>
   </section>
 
   <div id="footer-placeholder"></div>
 
-  <script src="/clientengineering.dmg.github.io/script.js"></script>
+  <script src="../../js/script.js"></script>
 
   <script>
     // =========================================================

@@ -1,0 +1,7 @@
+{
+  "id": "Auth-Tool",
+  "title": "User Authentication Simulator",
+  "date": "2026-06-25",
+  "tags": ["Auth", "Tokens", "API", "Tool"],
+  "description": "Generate secure tokens locally using a dummy EC private key and test authenticated engagements directly in the browser."
+}

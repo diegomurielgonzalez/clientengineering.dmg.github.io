@@ -1,0 +1,7 @@
+{
+  "id": "SSD-61287",
+  "title": "SPA Routing: Bubble Position Bug",
+  "date": "2026-07-16",
+  "tags": ["SPA", "Business Rules", "UI Bug"],
+  "description": "Demonstrates the race condition where a React router destroys a modal before the 'close' business rule can fire."
+}
