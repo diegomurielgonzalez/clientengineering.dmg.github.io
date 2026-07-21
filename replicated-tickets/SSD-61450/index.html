@@ -13,57 +13,34 @@
             color: #333;
         }
 
-
-        /* Custom left-aligned bubble */
-        .glia-left-bubble {
-            position: fixed;
-            left: 30px;
-            bottom: 30px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background-color: #53a0fd;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 999999;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .glia-left-bubble:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-        }
-        .glia-left-bubble svg {
-            width: 24px;
-            height: 24px;
-            fill: white;
-        }
-
-        @media (max-width: 768px) {
-            .glia-left-bubble {
-                left: 20px;
-                bottom: 20px;
-                width: 48px;
-                height: 48px;
-            }
-        }
-
-        /* Move the media selection panel (alertdialog) to the left */
-        #salemove .sm-touch-draggable-placeholder {
+        /* 
+         * LEFT-ALIGN BOTH STATES:
+         * - .sm-touch-draggable-lower-right .sm-visitor-app = bubble (closed)
+         * - .sm-touch-draggable-placeholder .sm-visitor-app = panel (open)
+         *
+         * Uses Glia's own --horizontal-offset and --vertical-offset variables
+         * but applies them to left/bottom instead of right/bottom.
+         */
+        #salemove .sm-visitor-app-container .sm-visitor-app {
             position: fixed !important;
-            left: 30px !important;
+            left: var(--horizontal-offset) !important;
             right: auto !important;
-            bottom: 30px !important;
-            transform: none !important;
+            bottom: var(--vertical-offset) !important;
         }
+
+        /* Also cover the omnibrowse container (CoBrowsing/screenshare UI) */
+        #salemove .omnibrowse .ob-visitor-container {
+            left: var(--horizontal-offset) !important;
+            right: auto !important;
+            bottom: var(--vertical-offset) !important;
+        }
+
+        /* Mobile adjustments */
         @media (max-width: 768px) {
-            #salemove .sm-touch-draggable-placeholder {
+            #salemove .sm-visitor-app-container .sm-visitor-app,
+            #salemove .omnibrowse .ob-visitor-container {
                 left: 20px !important;
                 bottom: 20px !important;
-                max-width: calc(100vw - 40px) !important;
             }
         }
     </style>
@@ -71,14 +48,5 @@
 <body>
     <h1>Welcome to the Mock Site</h1>
     <p>The Glia bubble is anchored to the bottom left.</p>
-
-    <!-- This is all you need — Glia handles everything on click -->
-    <button class="glia-left-bubble"
-            data-sm-show-media-selection-on="click"
-            aria-label="Let's talk!">
-        <svg viewBox="0 0 20 20">
-            <path d="M11.6,3.7H8.4c-2.6,0-4.7,1.8-5,4.2c-0.2,1.4,0.2,2.8,1.2,3.8c0.9,1,2.2,1.6,3.6,1.6h1.5l0.1,0.1l2.8,2.8v-2.9l0.3-0.1c2.4-0.6,4-2.8,3.7-5.2C16.4,5.6,14.2,3.7,11.6,3.7z"/>
-        </svg>
-    </button>
 </body>
 </html>
