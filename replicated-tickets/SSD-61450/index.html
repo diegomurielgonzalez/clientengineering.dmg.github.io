@@ -17,24 +17,33 @@
         }
 
         /* * 1. UNIVERSAL LEFT ALIGNMENT FOR ALL SCREEN SIZES
-        * Target ONLY the outermost positioning wrappers.
-        * .sm-touch-draggable-lower-right = The closed bubble
-        * .sm-touch-draggable-placeholder = The open engagement layout
+        * Target ONLY the outermost positioning wrappers and detach them from 
+        * Glia's native right-aligned desktop container using position: fixed.
+        * (We do not target .sm-visitor-app, keeping native padding intact)
         */
-        .salemove .sm-touch-draggable-lower-right,
-        .salemove .sm-touch-draggable-placeholder {
-            left: 20px !important;
+        #salemove .sm-touch-draggable-lower-right,
+        #salemove .sm-touch-draggable-placeholder {
+            position: fixed !important;
+            left: 30px !important;
             right: auto !important;
+            bottom: 30px !important;
             transform: none !important; /* Neutralizes Glia's dynamic JS sliding animations */
         }
 
-        /* * 2. MOBILE OVERFLOW PREVENTION (OPEN LAYOUT ONLY)
-        * Because we shifted the entire layout 20px from the left, we must cap its 
-        * maximum width on mobile screens so it does not bleed off the right edge.
-        * We apply this ONLY to the open layout wrapper, leaving the bubble itself alone.
+        /* * 2. MOBILE RESPONSIVENESS
+        * Adjust margins for small screens and cap the maximum width of the open layout 
+        * so it doesn't bleed off the right edge of a mobile device.
         */
-        .sm-mobile .salemove .sm-touch-draggable-placeholder {
-            max-width: calc(100vw - 40px) !important;
+        @media (max-width: 768px) {
+            #salemove .sm-touch-draggable-lower-right,
+            #salemove .sm-touch-draggable-placeholder {
+                left: 20px !important;
+                bottom: 20px !important;
+            }
+            
+            #salemove .sm-touch-draggable-placeholder {
+                max-width: calc(100vw - 40px) !important;
+            }
         }
     </style>
 </head>
