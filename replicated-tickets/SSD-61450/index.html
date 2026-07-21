@@ -8,18 +8,35 @@
     <script async src="https://api.glia.com/salemove_integration.js"></script>
 
     <style>
-        /* General page styling for the mock site */
-        body {
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            background-color: #f4f7f6;
-            color: #333;
+        /* ============================================================
+        GLIA LEFT-ALIGNMENT — FULL FIX (ALL SCREEN SIZES)
+        ============================================================ */
+
+        /* 
+        * 0. NEUTRALIZE THE OUTER CONTAINER
+        * #sm-visitor-app-container is a full-viewport overlay that uses
+        * flexbox (justify-content: flex-end) or absolute right positioning.
+        * We must disable its right-alignment so children can float left.
+        */
+        #salemove #sm-visitor-app-container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: auto !important;
+            width: auto !important;
+            height: auto !important;
+            display: block !important;           /* kills flex/grid right-alignment */
+            pointer-events: none !important;     /* pass clicks through to page */
         }
 
-        /* * 1. UNIVERSAL LEFT ALIGNMENT FOR ALL SCREEN SIZES
-        * Target ONLY the outermost positioning wrappers and detach them from 
-        * Glia's native right-aligned desktop container using position: fixed.
-        * (We do not target .sm-visitor-app, keeping native padding intact)
+        /* Re-enable pointer events on the actual widget */
+        #salemove #sm-visitor-app-container * {
+            pointer-events: auto;
+        }
+
+        /* 
+        * 1. UNIVERSAL LEFT ALIGNMENT FOR ALL SCREEN SIZES
+        * Now that the container is neutralized, position the wrappers.
         */
         #salemove .sm-touch-draggable-lower-right,
         #salemove .sm-touch-draggable-placeholder {
@@ -27,24 +44,50 @@
             left: 30px !important;
             right: auto !important;
             bottom: 30px !important;
-            transform: none !important; /* Neutralizes Glia's dynamic JS sliding animations */
+            top: auto !important;
+            transform: none !important;
+            will-change: auto !important;        /* prevent Glia from re-enabling GPU transforms */
         }
 
-        /* * 2. MOBILE RESPONSIVENESS
-        * Adjust margins for small screens and cap the maximum width of the open layout 
-        * so it doesn't bleed off the right edge of a mobile device.
+        /* 
+        * 2. PREVENT INLINE JS VARIABLE OVERRIDES
+        * Glia sometimes injects --horizontal-offset or similar custom properties.
+        * Force the relevant properties to ignore those variables.
+        */
+        #salemove .sm-touch-draggable-lower-right,
+        #salemove .sm-touch-draggable-placeholder {
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+            inset-inline-end: auto !important;
+            inset-inline-start: 30px !important;
+        }
+
+        /* 
+        * 3. ENGAGEMENT PANEL (OPEN STATE)
+        * When the bubble opens into the media-selection dialog, it uses
+        * .sm-touch-draggable-placeholder. Cap its width so it doesn't
+        * stretch full-screen on desktop.
+        */
+        #salemove .sm-touch-draggable-placeholder {
+            max-width: 400px !important;         /* matches Glia's native panel width */
+        }
+
+        /* 
+        * 4. MOBILE RESPONSIVENESS
         */
         @media (max-width: 768px) {
             #salemove .sm-touch-draggable-lower-right,
             #salemove .sm-touch-draggable-placeholder {
                 left: 20px !important;
                 bottom: 20px !important;
+                inset-inline-start: 20px !important;
             }
-            
+
             #salemove .sm-touch-draggable-placeholder {
                 max-width: calc(100vw - 40px) !important;
             }
         }
+
     </style>
 </head>
 <body>
