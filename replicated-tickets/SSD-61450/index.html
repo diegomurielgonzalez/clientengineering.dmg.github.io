@@ -44,6 +44,14 @@
             transform: scale(1.05);
             background-color: #1e3bb3; 
         }
+
+        /* * OVERRIDE GLIA'S DEFAULT POSITIONING 
+        * This forces the Glia Engagement Panel to the left for this site only.
+        */
+        .salemove #sm-visitor-app-container {
+            left: 30px !important;
+            right: auto !important;
+        }
     </style>
 </head>
 <body>
@@ -56,7 +64,42 @@
         Chat
     </div>
 
-    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const customBubble = document.querySelector('.custom-glia-bubble');
+
+            // Hide our custom button immediately when clicked
+            customBubble.addEventListener('click', () => {
+                customBubble.style.display = 'none';
+            });
+
+            // Set up a MutationObserver to watch Glia's UI state
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'style') {
+                        const gliaApp = mutation.target;
+                        // If Glia goes back to display: none, bring our custom button back
+                        if (gliaApp.style.display === 'none') {
+                            customBubble.style.display = 'flex';
+                        } else {
+                            customBubble.style.display = 'none';
+                        }
+                    }
+                });
+            });
+
+            // Since Glia loads asynchronously, we must wait for the #salemove div to exist 
+            // before we can observe it. We use a lightweight interval to find it.
+            const findGliaNode = setInterval(() => {
+                const gliaContainer = document.getElementById('salemove');
+                if (gliaContainer) {
+                    // Once found, attach the observer to watch for style (display) changes
+                    observer.observe(gliaContainer, { attributes: true });
+                    clearInterval(findGliaNode);
+                }
+            }, 500);
+        });
+    </script>
 
 </body>
 </html>
