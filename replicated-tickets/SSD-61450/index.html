@@ -95,6 +95,25 @@
     <h1>Welcome to the Mock Site</h1>
     <p>Notice the native Glia contact bubble securely anchored to the bottom left.</p>
     <p>By using standard CSS overrides, we no longer need custom JavaScript or HTML buttons.</p>
+    <script>
+        // Optional: Strip inline positioning Glia re-injects on desktop
+        const observer = new MutationObserver((mutations) => {
+        mutations.forEach((m) => {
+            if (m.type === 'attributes' && m.attributeName === 'style') {
+            const el = m.target;
+            if (el.classList.contains('sm-touch-draggable-lower-right') ||
+                el.classList.contains('sm-touch-draggable-placeholder')) {
+                el.style.removeProperty('right');
+                el.style.removeProperty('transform');
+            }
+            }
+        });
+        });
 
+        const salemove = document.getElementById('salemove');
+        if (salemove) {
+        observer.observe(salemove, { attributes: true, subtree: true, attributeFilter: ['style'] });
+        }
+    </script>
 </body>
 </html>
