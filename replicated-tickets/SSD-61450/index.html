@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glia Left-Aligned Bubble Mockup</title>
+    <title>Glia Left-Aligned Native Bubble Mockup</title>
 
     <script async src="https://api.glia.com/salemove_integration.js"></script>
 
@@ -16,109 +16,47 @@
             color: #333;
         }
 
-        /* * Custom Bubble CSS 
-         * This creates the responsive, left-docked bubble
+        /* * 1. UNIVERSAL LEFT ALIGNMENT 
+         * Targets both the native bubble wrapper and the open panel.
+         * Using !important ensures this wins out across desktop, tablet, and mobile.
          */
-        .custom-glia-bubble {
-            position: fixed;
-            bottom: 30px;
-            left: 30px; /* This safely anchors the bubble to the left across all screens */
-            width: 60px;
-            height: 60px;
-            background-color: #2b52e7; /* Replace with the client's brand color */
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            cursor: pointer;
-            z-index: 9999;
-            font-size: 14px;
-            font-weight: bold;
-            transition: transform 0.2s ease-in-out, background-color 0.2s;
-        }
-
-        /* Hover effect for better user experience */
-        .custom-glia-bubble:hover {
-            transform: scale(1.05);
-            background-color: #1e3bb3; 
-        }
-
-        /* * 1. OVERRIDE GLIA'S DEFAULT DESKTOP POSITIONING 
-        * Target the floating application containers, breaking them 
-        * out of their default layout and pinning them to the left.
-        */
+        .salemove .sm-touch-draggable-lower-right,
         .salemove .sm-touch-draggable-placeholder,
         .salemove .sm-visitor-app {
             position: fixed !important;
             left: 30px !important;
             right: auto !important;
             bottom: 30px !important;
+            transform: none !important; /* Neutralizes Glia's dynamic JS positioning */
         }
 
-        /* * 2. RESPONSIVE MOBILE FIX
-        * Neutralize the .sm-mobile class overrides. 
-        * This kills the rogue JS positioning, keeps it pinned left, 
-        * and recalculates the width so it fits perfectly on small screens.
-        */
-        .sm-mobile .salemove .sm-touch-draggable-placeholder,
-        .sm-mobile .salemove .sm-visitor-app {
-            left: 20px !important; /* Slightly tighter margin for mobile screens */
-            right: auto !important;
-            bottom: 20px !important;
-            width: calc(100vw - 40px) !important; /* Prevents the panel from overflowing the screen */
-            max-width: 380px !important; /* Caps the size so it maintains a clean chat window shape */
-            transform: none !important; /* Stops Glia's JS from sliding it back to the right */
+        /* * 2. MOBILE & NARROW SCREEN MARGINS 
+         * Adjusts the distance from the edge slightly on smaller devices.
+         */
+        @media (max-width: 768px) {
+            .salemove .sm-touch-draggable-lower-right,
+            .salemove .sm-touch-draggable-placeholder,
+            .salemove .sm-visitor-app {
+                left: 20px !important;
+                bottom: 20px !important;
+            }
+            
+            /* * 3. WIDTH CONSTRAINT (OPEN PANEL ONLY)
+             * Restricts the open chat window from bleeding off the screen.
+             * We do NOT apply this to the bubble wrapper to avoid a stretched clickbox.
+             */
+            .salemove .sm-visitor-app {
+                width: calc(100vw - 40px) !important;
+                max-width: 380px !important;
+            }
         }
     </style>
 </head>
 <body>
 
     <h1>Welcome to the Mock Site</h1>
-    <p>Notice the custom contact bubble securely anchored to the bottom left.</p>
-    <p>Because it uses standard CSS, it will not be pushed off-screen on mobile devices.</p>
-
-    <div class="custom-glia-bubble" data-sm-show-media-selection-on="click">
-        Chat
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const customBubble = document.querySelector('.custom-glia-bubble');
-
-            // Hide our custom button immediately when clicked
-            customBubble.addEventListener('click', () => {
-                customBubble.style.display = 'none';
-            });
-
-            // Set up a MutationObserver to watch Glia's UI state
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.attributeName === 'style') {
-                        const gliaApp = mutation.target;
-                        // If Glia goes back to display: none, bring our custom button back
-                        if (gliaApp.style.display === 'none') {
-                            customBubble.style.display = 'flex';
-                        } else {
-                            customBubble.style.display = 'none';
-                        }
-                    }
-                });
-            });
-
-            // Since Glia loads asynchronously, we must wait for the #salemove div to exist 
-            // before we can observe it. We use a lightweight interval to find it.
-            const findGliaNode = setInterval(() => {
-                const gliaContainer = document.getElementById('salemove');
-                if (gliaContainer) {
-                    // Once found, attach the observer to watch for style (display) changes
-                    observer.observe(gliaContainer, { attributes: true });
-                    clearInterval(findGliaNode);
-                }
-            }, 500);
-        });
-    </script>
+    <p>Notice the native Glia contact bubble securely anchored to the bottom left.</p>
+    <p>By using standard CSS overrides, we no longer need custom JavaScript or HTML buttons.</p>
 
 </body>
 </html>
