@@ -17,37 +17,27 @@
         }
 
         /* * 1. UNIVERSAL LEFT ALIGNMENT 
-         * Targets both the native bubble wrapper and the open panel.
-         * Using !important ensures this wins out across desktop, tablet, and mobile.
-         */
+        * Target ONLY the outermost draggable wrappers to move the unit.
+        * We specifically removed .sm-visitor-app from this rule so it 
+        * retains Glia's native internal padding and drop shadows.
+        */
         .salemove .sm-touch-draggable-lower-right,
-        .salemove .sm-touch-draggable-placeholder,
-        .salemove .sm-visitor-app {
+        .salemove .sm-touch-draggable-placeholder {
             position: fixed !important;
-            left: 30px !important;
+            left: 20px !important;
             right: auto !important;
-            bottom: 30px !important;
+            bottom: 20px !important;
             transform: none !important; /* Neutralizes Glia's dynamic JS positioning */
         }
 
-        /* * 2. MOBILE & NARROW SCREEN MARGINS 
-         * Adjusts the distance from the edge slightly on smaller devices.
-         */
+        /* * 2. MOBILE OVERFLOW PREVENTION
+        * On mobile, Glia's panel natively tries to stretch to the full screen width.
+        * Because we anchored it 20px from the left, we just cap the max-width 
+        * so it doesn't bleed off the right side of the phone screen.
+        */
         @media (max-width: 768px) {
-            .salemove .sm-touch-draggable-lower-right,
-            .salemove .sm-touch-draggable-placeholder,
             .salemove .sm-visitor-app {
-                left: 20px !important;
-                bottom: 20px !important;
-            }
-            
-            /* * 3. WIDTH CONSTRAINT (OPEN PANEL ONLY)
-             * Restricts the open chat window from bleeding off the screen.
-             * We do NOT apply this to the bubble wrapper to avoid a stretched clickbox.
-             */
-            .salemove .sm-visitor-app {
-                width: calc(100vw - 40px) !important;
-                max-width: 380px !important;
+                max-width: calc(100vw - 40px) !important;
             }
         }
     </style>
