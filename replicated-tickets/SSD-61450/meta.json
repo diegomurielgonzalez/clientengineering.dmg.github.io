@@ -1,0 +1,11 @@
+{
+  "id": "SSD-61187",
+  "title": "Left-Aligned Glia Bubble & Engagement Panel",
+  "date": "2026-07-22",
+  "tags": [
+    "CSS Override",
+    "Layout",
+    "Responsive"
+  ],
+  "description": "Locally forces the native Glia bubble and Engagement Panel to strictly align to the left via custom CSS overrides without altering global Admin Console settings."
+}

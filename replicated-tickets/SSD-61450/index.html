@@ -1,52 +1,339 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glia Left-Aligned Bubble</title>
-    <script async src="https://api.glia.com/salemove_integration.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            background-color: #f4f7f6;
-            color: #333;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue Repro: Left-Aligned Bubble | CE Testing Site</title>
+  
+  <!-- Global Assets -->
+  <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+  
+  <!-- Glia Integration -->
+  <script async src="https://api.glia.com/salemove_integration.js"></script>
 
-        /* 
-         * LEFT-ALIGN BOTH STATES:
-         * - .sm-touch-draggable-lower-right .sm-visitor-app = bubble (closed)
-         * - .sm-touch-draggable-placeholder .sm-visitor-app = panel (open)
-         *
-         * Uses Glia's own --horizontal-offset and --vertical-offset variables
-         * but applies them to left/bottom instead of right/bottom.
-         */
-        #salemove .sm-visitor-app-container .sm-visitor-app {
-            position: fixed !important;
-            left: var(--horizontal-offset) !important;
-            right: auto !important;
-            bottom: var(--vertical-offset) !important;
-        }
+  <style>
+    /* =========================================================
+       LIGHT MODE (DEFAULT) STYLES
+       ========================================================= */
+       
+    /* Issue Header & Metadata */
+    .issue-header {
+      background-color: #f8f9fa;
+      padding: 40px 20px;
+      text-align: center;
+      border-bottom: 1px solid #eaeaea;
+    }
 
-        /* Also cover the omnibrowse container (CoBrowsing/screenshare UI) */
+    .issue-tags {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    /* Simulator Layout */
+    .simulator-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    #main-content {
+      padding: 30px;
+      background: white;
+      border-radius: 8px;
+      min-height: 250px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      border: 1px solid #eaeaea;
+      word-break: break-word;
+    }
+
+    /* Documentation Section Styles */
+    .issue-documentation {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      border: 1px solid #eaeaea;
+      line-height: 1.6;
+    }
+
+    .issue-documentation h2 {
+      margin-top: 0;
+    }
+
+    .issue-documentation h3 {
+      margin-top: 25px;
+      color: #333;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 5px;
+    }
+
+    .jira-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background-color: #e8f0fe;
+      color: #0056b3;
+      padding: 8px 15px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-bottom: 20px;
+      transition: background-color 0.2s;
+    }
+
+    .jira-link:hover {
+      background-color: #d0e1fd;
+    }
+
+    .step-list {
+      margin-left: 20px;
+      padding-left: 0;
+    }
+
+    .step-list li {
+      margin-bottom: 10px;
+    }
+
+    /* Code Block & Copy Button Styles */
+    .code-block-container {
+      position: relative;
+      background-color: #2d2d2d;
+      color: #f8f8f2;
+      border-radius: 6px;
+      padding: 40px 20px 20px;
+      margin: 20px 0;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .code-block-container pre {
+      margin: 0;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #4a4a4a;
+      color: #ffffff;
+      border: 1px solid #5a5a5a;
+      border-radius: 4px;
+      padding: 5px 12px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #666666;
+    }
+
+    .copy-btn.copied {
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+
+    /* =========================================================
+       DARK MODE OVERRIDES
+       ========================================================= */
+    @media (prefers-color-scheme: dark) {
+      .issue-header {
+        background-color: #1e1e24; 
+        border-bottom: 1px solid #333;
+        color: #e0e0e0;
+      }
+
+      #main-content,
+      .issue-documentation {
+        background-color: #1e1e24; 
+        border: 1px solid #333;
+        color: #e0e0e0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      }
+
+      .issue-documentation h2,
+      .issue-documentation h3 {
+        color: #ffffff; 
+        border-bottom: 1px solid #444;
+      }
+
+      .jira-link {
+        background-color: #1a365d; 
+        color: #8bb4f7; 
+      }
+
+      .jira-link:hover {
+        background-color: #224a80; 
+      }
+    }
+    
+    /* Extra Small Screen Adjustments */
+    @media (max-width: 480px) {
+      .simulator-container, .issue-documentation {
+        padding: 20px;
+      }
+    }
+
+    /* =========================================================
+       REPLICATION-SPECIFIC CSS: LEFT-ALIGNED BUBBLE
+       ========================================================= */
+       
+    /* 
+     * LEFT-ALIGN BOTH STATES:
+     * - .sm-touch-draggable-lower-right .sm-visitor-app = bubble (closed)
+     * - .sm-touch-draggable-placeholder .sm-visitor-app = panel (open)
+     *
+     * Uses Glia's own --horizontal-offset and --vertical-offset variables
+     * but applies them to left/bottom instead of right/bottom.
+     */
+    #salemove .sm-visitor-app-container .sm-visitor-app {
+        position: fixed !important;
+        left: var(--horizontal-offset) !important;
+        right: auto !important;
+        bottom: var(--vertical-offset) !important;
+    }
+
+    /* Also cover the omnibrowse container (CoBrowsing/screenshare UI) */
+    #salemove .omnibrowse .ob-visitor-container {
+        left: var(--horizontal-offset) !important;
+        right: auto !important;
+        bottom: var(--vertical-offset) !important;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+        #salemove .sm-visitor-app-container .sm-visitor-app,
         #salemove .omnibrowse .ob-visitor-container {
-            left: var(--horizontal-offset) !important;
-            right: auto !important;
-            bottom: var(--vertical-offset) !important;
+            left: 20px !important;
+            bottom: 20px !important;
         }
-
-        /* Mobile adjustments */
-        @media (max-width: 768px) {
-            #salemove .sm-visitor-app-container .sm-visitor-app,
-            #salemove .omnibrowse .ob-visitor-container {
-                left: 20px !important;
-                bottom: 20px !important;
-            }
-        }
-    </style>
+    }
+  </style>
 </head>
 <body>
-    <h1>Welcome to the Mock Site</h1>
-    <p>The Glia bubble is anchored to the bottom left.</p>
+
+  <div id="nav-placeholder"></div>
+
+  <header class="issue-header">
+    <div class="fade-in">
+      <h1>Left-Aligned Glia Bubble & Engagement Panel</h1>
+      <p>Overrides Glia's native positioning to dock the interface to the bottom-left locally.</p>
+      
+      <div class="issue-tags">
+        <span class="tag" data-tag="css">CSS Override</span>
+        <span class="tag" data-tag="layout">Layout</span>
+        <span class="tag" data-tag="responsive">Responsive</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="simulator-container">
+    <div id="main-content">
+      <h2>Welcome to the Mock Site</h2>
+      <p>The Glia bubble is anchored to the bottom left.</p>
+    </div>
+  </main>
+
+  <section class="issue-documentation">
+    <a href="https://glia.atlassian.net/browse/SSD-61450" class="jira-link" target="_blank">
+      🔗 Jira Ticket: SSD-61450
+    </a>
+    
+    <h2>Client Context</h2>
+    <p>The client needs the Glia layout docked to the left on a specific testing site. Since they might not want this layout applied globally across all their domains, we cannot use the global 'Engagement Panel Location' setting. The solution must be fully responsive and overcome Glia's native 768px desktop flexbox breakpoint, all without stripping away the native inner padding or causing mobile viewport overflow.</p>
+
+    <h2>Steps to Fix</h2>
+    <ul class="step-list">
+      <li>Deploy the standard Glia integration script on the page.</li>
+      <li>Inject the following custom CSS ruleset strictly targeting the outermost wrappers: <code>#salemove .sm-touch-draggable-lower-right</code> (the bubble) and <code>#salemove .sm-touch-draggable-placeholder</code> (the open layout).</li>
+    </ul>
+
+    <!-- COPY TO CLIPBOARD CODE BLOCK -->
+    <div class="code-block-container">
+      <button class="copy-btn" id="copyCssBtn">Copy</button>
+      <pre><code id="cssCodeBlock">/* =========================================================
+   REPLICATION-SPECIFIC CSS: LEFT-ALIGNED BUBBLE
+   ========================================================= */
+   
+/* 
+ * LEFT-ALIGN BOTH STATES:
+ * - .sm-touch-draggable-lower-right .sm-visitor-app = bubble (closed)
+ * - .sm-touch-draggable-placeholder .sm-visitor-app = panel (open)
+ *
+ * Uses Glia's own --horizontal-offset and --vertical-offset variables
+ * but applies them to left/bottom instead of right/bottom.
+ */
+#salemove .sm-visitor-app-container .sm-visitor-app {
+    position: fixed !important;
+    left: var(--horizontal-offset) !important;
+    right: auto !important;
+    bottom: var(--vertical-offset) !important;
+}
+
+/* Also cover the omnibrowse container (CoBrowsing/screenshare UI) */
+#salemove .omnibrowse .ob-visitor-container {
+    left: var(--horizontal-offset) !important;
+    right: auto !important;
+    bottom: var(--vertical-offset) !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    #salemove .sm-visitor-app-container .sm-visitor-app,
+    #salemove .omnibrowse .ob-visitor-container {
+        left: 20px !important;
+        bottom: 20px !important;
+    }
+}</code></pre>
+    </div>
+
+    <ul class="step-list">
+      <li>Apply <code>position: fixed !important</code>, <code>left</code>, and <code>bottom</code> coordinates to detach these wrappers from Glia's native right-aligned flexbox container. Do not target <code>.sm-visitor-app</code> to ensure native padding is preserved.</li>
+      <li>Include a mobile media query (<code>max-width: 768px</code>) to slightly tighten the left/bottom margins and apply a <code>max-width: calc(100vw - 40px)</code> strictly to the open layout wrapper so it does not bleed off smaller screens.</li>
+    </ul>
+  </section>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="../../js/script.js"></script>
+  
+  <!-- Custom JS for Copy Button -->
+  <script>
+    document.getElementById('copyCssBtn').addEventListener('click', function() {
+      const codeText = document.getElementById('cssCodeBlock').innerText;
+      
+      navigator.clipboard.writeText(codeText).then(() => {
+        const btn = document.getElementById('copyCssBtn');
+        btn.innerText = 'Copied!';
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+          btn.innerText = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    });
+  </script>
 </body>
 </html>
