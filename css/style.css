@@ -2,9 +2,9 @@
 :root {
   /* Monochromatic Palette */
   --purple-main: #7C19DD;
-  --purple-shade-1: #6714BA;
+  --purple-shade-1: #a95bff;
   --purple-shade-2: #511091;
-  --purple-shade-3: #3A0C69;
+  --purple-shade-3: #ccb1e7;
   --purple-shade-4: #230740;
 
   /* UI Colors */
@@ -401,4 +401,81 @@ button:disabled:hover {
   flex-direction: column; 
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   animation: popIn 0.5s ease-out forwards; /* NEW: Automatically fades the card in */
+}
+
+/* --- Main Layout Additions --- */
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--text-dark);
+  margin-bottom: 40px;
+}
+
+/* --- Quick Tools Section --- */
+.quick-tools {
+  margin-bottom: 80px;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.tool-card {
+  background-color: var(--purple-shade-4);
+  color: #fff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 8px 20px rgba(35, 7, 64, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tool-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(35, 7, 64, 0.25);
+  background-color: var(--purple-shade-3);
+}
+
+.tool-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.tool-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.tool-card p {
+  font-size: 1rem;
+  color: #e5d4f5;
+  line-height: 1.5;
+}
+
+/* Dark Theme specific overrides for the new sections */
+body.dark-theme .section-title {
+  color: #ffffff;
+}
+
+body.dark-theme .tool-card {
+  background-color: #120524; /* Darker distinct card for dark mode */
+  border: 1px solid #3A0C69;
+}
+
+body.dark-theme .tool-card:hover {
+  border-color: #bfa6d8;
+  box-shadow: 0 8px 25px rgba(191, 166, 216, 0.1);
 }

@@ -6,42 +6,73 @@
   <title>CE Testing Site | Diego Muriel</title>
   
   <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
-  
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-  
   <link rel="stylesheet" href="./css/style.css">
   
   <script async src="https://api.glia.com/salemove_integration.js"></script>
 </head>
 <body>
 
-  <!-- Navbar Placeholder -->
   <div id="nav-placeholder"></div>
 
   <header class="hero">
     <div class="hero-content fade-in">
-      <h1>Welcome to Diego Muriel's Testing Site</h1>
-      <p>Your dedicated sandbox for testing and experiencing Glia products.</p>
-      <button class="cta-button" id="startTestBtn">Start Engagement</button>
+      <h1>Client Engineering Sandbox</h1>
+      <p>A dedicated testing environment for experiencing Glia products, replicating complex routing behaviors, and validating secure conversational flows.</p>
+      <button class="cta-button" id="startTestBtn">Simulate Engagement</button>
     </div>
   </header>
 
-  <section class="features">
-    <div class="feature-card slide-up">
-      <h3>Chat & Messaging</h3>
-      <p>Test asynchronous and synchronous chat capabilities.</p>
-    </div>
-    <div class="feature-card slide-up delay-1">
-      <h3>Audio & Video</h3>
-      <p>Experience seamless transitions from chat to rich media.</p>
-    </div>
-    <div class="feature-card slide-up delay-2">
-      <h3>CoBrowsing</h3>
-      <p>Test screen sharing and collaborative browsing features.</p>
-    </div>
-  </section>
+  <main class="main-container">
+    
+    <section class="quick-tools fade-in delay-1">
+      <h2 class="section-title">Developer Tools & Resources</h2>
+      <div class="tools-grid">
+        
+        <a href="./replicated-tickets/index.html" class="tool-card">
+          <div class="tool-icon">📚</div>
+          <h3>Replicated Issues Library</h3>
+          <p>Browse the automated database of reproduced bugs, race conditions, and their Web Business Rule solutions.</p>
+        </a>
 
-  <!-- Footer Placeholder -->
+        <a href="./replicated-tickets/user-id-authentication/index.html" class="tool-card">
+          <div class="tool-icon">🔑</div>
+          <h3>Authentication Simulator</h3>
+          <p>Generate secure JWTs locally using a dummy EC private key to test Secure Conversations and authenticated routing.</p>
+        </a>
+
+      </div>
+    </section>
+
+    <section class="capabilities slide-up delay-2">
+      <h2 class="section-title">Platform Capabilities</h2>
+      <div class="features">
+        
+        <div class="feature-card">
+          <h3>Omnichannel Chat</h3>
+          <p>Test asynchronous and synchronous messaging capabilities, including SMS and WhatsApp flows.</p>
+        </div>
+        
+        <div class="feature-card">
+          <h3>Rich Media & CoBrowsing</h3>
+          <p>Experience seamless transitions from text chat to Voice/Video and collaborative screen sharing.</p>
+        </div>
+        
+        <div class="feature-card">
+          <h3>SPA Compatibility</h3>
+          <p>Validate Glia widget behavior across dynamic React/Angular Single Page Application route changes.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Business Rules Engine</h3>
+          <p>Test reactive elements, custom triggers, and URL-based failsafe logic for complex client architectures.</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
   <div id="footer-placeholder"></div>
 
   <script src="./js/script.js"></script>
